@@ -89,7 +89,8 @@ function saveTableData() {
     .then(response => response.json())
     .then(data => {
       // Handle the response here if needed
-      console.log(data);
+      // console.log(data);
+      window.location.reload()
     })
     .catch(error => {
       // Handle the error here if needed

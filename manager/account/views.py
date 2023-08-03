@@ -115,7 +115,6 @@ def customer(request):
 def tablesByUser(request):
     page_number = request.GET.get('page')
     # Joined Tables
-
     joinedTables = JoinedTables.objects.filter(
         customer=request.user,
         ).order_by('timeOfCreating')  # Reverse the order by '-id'
@@ -312,98 +311,146 @@ def allCustomers(request):
 
 @employee_required
 def customerTables(request, user_id):
-    user = User.objects.get(id = user_id)
-    tableRows = TableItem.objects.filter(customer=user)  # shat a dandaxacnelu heto
+    user = User.objects.get(id=user_id)
     page_number = request.GET.get('page')
-
-    tablesbyUser = UserTable.objects.filter(
-        user=user, 
-        singleTable__isnull=True
-        ).order_by('timeOfCreating')  # Reverse the order by 'timeOfCreating'
-    tablePaginator = Paginator(tablesbyUser, 10)  # show 10 tables per page
-    table_page_obj = tablePaginator.get_page(page_number)
-    reversed_table_page_obj = tablePaginator.get_page(
-        tablePaginator.num_pages - table_page_obj.number + 1
-        )  # Reversed table_page_obj
-
-    singleTables = UserTable.objects.filter(
-        user= user,
-        singleTable__isnull = False
-    ).order_by('timeOfCreating')
-    singlePaginator = Paginator(singleTables, 1) #show 1 tables per page
-    single_page_obj = singlePaginator.get_page(page_number)
-    reversed_single_page_obj = singlePaginator.get_page(
-        singlePaginator.num_pages - single_page_obj.number + 1
-    )
+    # Joined Tables
     joinedTables = JoinedTables.objects.filter(
         customer=user,
-        ).order_by('timeOfCreating')  # Reverse the order by '-id'
+    ).order_by('timeOfCreating')  # Reverse the order by '-id'
     joinPaginator = Paginator(joinedTables, 5)  # show 5 joinedTables per page
     join_page_obj = joinPaginator.get_page(page_number)
     reversed_join_page_obj = joinPaginator.get_page(
         joinPaginator.num_pages - join_page_obj.number + 1
-        )  # Reversed join_page_obj
-    reversed_join_page_obj =  reversed_join_page_obj.__reversed__()
-    joineddebt = Debt.objects.filter(
-        customer = user,
-        joined = True
-        ).order_by('timeOfCreating')
-    joineddebtPaginator = Paginator(joineddebt, 5) #show 5 debts per page of the joined tables
-    joineddebt_page_obj = joineddebtPaginator.get_page(page_number)
-    reversed_joined_debt_obj = joineddebtPaginator.get_page(
-        joineddebtPaginator.num_pages - joineddebt_page_obj.number + 1
-    )
-    singleddebt = Debt.objects.filter(
-        customer = user,
-        single = True
-        ).order_by('timeOfCreating')
-    singledebtPaginator = Paginator(singleddebt, 1) #show 5 debts per page of the singled tables
-    singledebt_page_obj = singledebtPaginator.get_page(page_number)
-    reversed_single_debt_obj = singledebtPaginator.get_page(
-        singledebtPaginator.num_pages - singledebt_page_obj.number + 1
-    )
+    ).__reversed__()  # Reversed join_page_obj
+    reversed_join_page_copy = joinPaginator.get_page(
+        joinPaginator.num_pages - join_page_obj.number + 1
+    ).__reversed__()  # Reversed join_page_obj
+    reversed_join_page_for_debt = joinPaginator.get_page(
+        joinPaginator.num_pages - join_page_obj.number + 1
+    )  # Reversed join_page_obj
+    reversed_table_page_obj = []
+    for join in reversed_join_page_copy:
+        try:
+            joins = UserTable.objects.filter(
+                user=user,
+                joinedTable=join,
+            )
+            for jo in joins:
+                reversed_table_page_obj.append(jo)
+        except:
+            continue
+    JoinRows = []
+    for tab in reversed_table_page_obj:
+        try:
+            row = TableItem.objects.filter(
+                customer=user,
+                table=tab
+            )
+            for r in row:
+                JoinRows.append(r)
+        except:
+            continue
+    # Joined Tables
+    single_debt_array = []
+    debt_array = []
+    for i in reversed_join_page_for_debt:
+        try:
+            joinedDebt = Debt.objects.get(
+                customer=user,
+                joined=True,
+                date=i.dateOfCreating
+            )
+            theDebt = [str(i.dateOfCreating), joinedDebt.debt, ""]
+            try:
+                singleDebt = Debt.objects.get(
+                    customer=user,
+                    single=True,
+                    date=i.dateOfCreating
+                )
+                if singleDebt.date not in single_debt_array:
+                    single_debt_array.append(singleDebt.date)
+                theDebt[2] = singleDebt.debt
+            except:
+                pass
+            debt_array.append(theDebt)
+        except:
+            continue
+
+    SingleTables = []
+    for date in single_debt_array:
+        try:
+            singleTab = UserTable.objects.get(
+                user=user,
+                singleTable__isnull=False,
+                dateOfCreating=date
+            )
+            SingleTables.append(singleTab)
+        except:
+            continue
+    SingleRows = []
+    for table in SingleTables:
+        try:
+            row = TableItem.objects.filter(
+                customer=user,
+                table=table,
+            )
+            for r in row:
+                SingleRows.append(r)
+        except:
+            continue
+    # Single Tables
     try:
         weekPaymant = Paymant.objects.get(
-            customer = user,
-            date = reversed_single_debt_obj[0].date
+            customer=user,
+            date=single_debt_array[0]
         )
     except:
         weekPaymant = Paymant.objects.none()
+
     try:
         week_debt = Week_debt.objects.get(
-            customer = user,
-            date = reversed_single_debt_obj[0].date
+            customer=user,
+            date=single_debt_array[0]
         )
     except:
         week_debt = Week_debt.objects.none()
-    
+
     try:
         old_debt = Old_debt.objects.get(
-            customer = user,
-            date = reversed_single_debt_obj[0].date
+            customer=user,
+            date=single_debt_array[0]
         )
     except:
         old_debt = Old_debt.objects.none()
+
     try:
-        globalDebt = Global_Debt.objects.filter(customer = user).latest('timeOfCreating')
+        globalDebt = Global_Debt.objects.filter(customer=user).latest('timeOfCreating')
     except:
         globalDebt = Global_Debt.objects.none()
-        
+
+    try:
+        defaultDate = single_debt_array[0].strftime("%Y-%m-%d")
+    except:
+        defaultDate = datetime.now().strftime("%Y-%m-%d")
+
     return render(request, 'customerTables.html', {
         'table': join_page_obj,
+        'defaultDate': defaultDate,
         'tables': reversed_table_page_obj,
         'joins': reversed_join_page_obj,
-        'Rows': tableRows,
-        'singleTables': reversed_single_page_obj,
-        'joinedDebt': reversed_joined_debt_obj,
-        'singleDebt': reversed_single_debt_obj,
+        # 'Rows': tableRows,
+        "SingleRows": SingleRows,
+        "JoinRows": JoinRows,
+        # 'singleTables': reversed_single_page_obj,
+        'singleTables': SingleTables,
+        'joinedDebt': debt_array,
+        # 'singleDebt': reversed_single_debt_obj,
         'weekPaymant': weekPaymant,
         'weekDebt': week_debt,
         'oldDebt': old_debt,
         'globalDebt': globalDebt,
         'customer': user
     })
-
 def myOrders(request, supplier_id):
     theSupplier = User.objects.get(id = supplier_id)
     orderedProducts_Tables = Ordered_Products_Table.objects.filter(supplierof_Table = theSupplier)
