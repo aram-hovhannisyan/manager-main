@@ -80,3 +80,7 @@ tables.forEach(table => {
   addTotalRow(table);
   addTotalColumn(table);
 });
+
+
+
+

@@ -266,20 +266,13 @@ def tablesByUser(request):
 
 @employee_required
 def employee(request):
-
-    # tablesUsers = UserTable.objects.all()
-    # items = ItemsModel.objects.all()
-    # tableRows = TableItem.objects.all()
     tableRows = BigTableRows.objects.all()
     bigTables = BigTable.objects.all()
-    suppliers = User.objects.filter(is_supplier = True)
-
+    suppliers = User.objects.filter(is_supplier=True)
     uniq = ItemsModel.uniqueProductNames(None)
-    # for row in tableRows:
-    #     print(row.product_name ,row.total_price)
+    print(tableRows)
+    print(uniq)
     return render(request, 'employee.html', {
-        # 'Items': items,
-        # 'Tables': tablesUsers,
         'Products': uniq,
         'TableRows': tableRows,
         'BigTables': bigTables,
