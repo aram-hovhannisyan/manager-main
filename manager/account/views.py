@@ -97,7 +97,6 @@ def logout_view(request):
 def customer(request):
     tablesUsers = UserTable.objects.all()
     items = ItemsModel.productsfor_Customer(request.user)
-
     tableRows = TableItem.objects.all()
     joinedTables = User.objects.filter(is_supplier=True, username__in=["Կիրովական", "Արտադրամաս"])
     suppliers = User.objects.filter(is_supplier=True).exclude(username__in=joinedTables.values('username')) 
@@ -270,8 +269,8 @@ def employee(request):
     bigTables = BigTable.objects.all()
     suppliers = User.objects.filter(is_supplier=True)
     uniq = ItemsModel.uniqueProductNames(None)
-    print(tableRows)
-    print(uniq)
+    # print(tableRows)
+    # print(uniq)
     return render(request, 'employee.html', {
         'Products': uniq,
         'TableRows': tableRows,
@@ -444,6 +443,7 @@ def customerTables(request, user_id):
         'globalDebt': globalDebt,
         'customer': user
     })
+
 def myOrders(request, supplier_id):
     theSupplier = User.objects.get(id = supplier_id)
     orderedProducts_Tables = Ordered_Products_Table.objects.filter(supplierof_Table = theSupplier)
@@ -559,13 +559,15 @@ def admin(request):
         supplier = data['supplier']
         productName = data['productName']
         productPrice = data['productPrice']
+        supPrice = data['supPrice']
 
         for customer in customers:
             item = ItemsModel(
                 customer=customer,
                 supplier=supplier,
                 productName=productName,
-                productPrice=productPrice
+                productPrice=productPrice,
+                supPrice=supPrice
             )
             item.save()
 

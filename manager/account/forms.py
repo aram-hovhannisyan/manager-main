@@ -58,7 +58,7 @@ class SignUpForm(UserCreationForm):
 class ItemAddForm(forms.ModelForm):
     class Meta:
         model = ItemsModel
-        fields = ('customer','supplier','productName', 'productPrice')
+        fields = ('customer','supplier','productName', 'productPrice', 'supPrice')
 
 # class ItemAddForm(forms.ModelForm):
 #     customer = forms.ModelMultipleChoiceField(queryset=User.objects.filter(is_customer=True), widget=forms.CheckboxSelectMultiple)

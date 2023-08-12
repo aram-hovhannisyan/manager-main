@@ -42,19 +42,32 @@ function addTotalColumn(table) {
 
   // Create a new header cell for the total column
   const totalHeader = document.querySelector('.total-column');
+  let lastSupCellSum = 0
 
   // Sum the product counts for each row and add the total to a new cell in each row
   for (let i = 0; i < rows.length; i++) {
+    
     const cells = rows[i].querySelectorAll('td');
-    const sumCells = rows[i].querySelectorAll('td');
+    const supCells = rows[i].querySelectorAll('th')
+    let supTotal = 0
+    for (let s = 0; s < supCells.length; s++) {
+      supTotal += parseInt(supCells[s].textContent, 10)
+      rows[i].removeChild(supCells[s])
+    }
+
+    // const sumCells = rows[i].querySelectorAll('td');
     let total = 0;
     let totalSum = 0;
     for (let j = 1; j < cells.length; j += 2) {
       total += parseInt(cells[j].textContent, 10);
-      totalSum += parseInt(sumCells[j+1].textContent, 10);
+      totalSum += parseInt(cells[j+1].textContent, 10);
     }
     const totalCell = document.createElement('td');
     const totalSumCell = document.createElement('td');
+    const supTotalCell = document.createElement('td')
+    
+
+    supTotalCell.classList.add('supTotal')
 
     totalCell.classList.add('totalcolumn-row');
     totalSumCell.classList.add('totalcolumn-row');
@@ -69,8 +82,22 @@ function addTotalColumn(table) {
     } else {
       totalCell.textContent = total;
     }
+    if (!supTotal) {
+      supTotalCell.textContent = '0';
+    } else {
+      supTotalCell.textContent = supTotal;
+    }
+    lastSupCellSum += supTotal
+    if (i == rows.length - 1){
+      supTotalCell.textContent = lastSupCellSum
+    }
+    
+    supTotalCell.style.display = 'none'
+    supTotalCell.style.color = 'red'
     rows[i].appendChild(totalCell);
     rows[i].appendChild(totalSumCell);
+    rows[i].appendChild(supTotalCell)
+
   }
 }
 
@@ -80,7 +107,3 @@ tables.forEach(table => {
   addTotalRow(table);
   addTotalColumn(table);
 });
-
-
-
-

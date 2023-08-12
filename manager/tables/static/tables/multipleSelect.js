@@ -2,7 +2,7 @@ var formSubmitted = false;
     
     document.getElementById('addProductForm').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent form submission
-    
+        console.log('HI');
         if (formSubmitted) {
             return; // Do nothing if the form has already been submitted
         }
@@ -13,13 +13,15 @@ var formSubmitted = false;
         var customerOptions = [...document.getElementsByName('customer')[0].options];
         var selectedCustomers = customerOptions.filter(option => option.selected).map(option => option.value);
         var supplier = document.getElementsByName('supplier')[0].value;
+        var supPrice = document.getElementsByName('supPrice')[0].value;
     
         // Create data object
         var data = {
             productName: productName,
             productPrice: productPrice,
             customers: selectedCustomers,
-            supplier: supplier
+            supplier: supplier,
+            supPrice: supPrice
         };
     
         // Convert data to JSON

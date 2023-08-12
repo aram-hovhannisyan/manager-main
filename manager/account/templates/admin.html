@@ -14,8 +14,8 @@
 
 <form method="POST" id="addProductForm">
     {% csrf_token %}
-    <div id="addProductDiv">
-        <div id="ProductInputs">
+    <div id="addProductDiv" >
+        <div id="ProductInputs"  style="height: 450px;">
             <br>
             <p>Ապրանքի անունը</p>
             <input type="text" name="productName" style="display: block; width: 50%; margin: auto; height: 30px;"><br>
@@ -34,15 +34,16 @@
                 {% for i in Suppliers %}
                     <option value="{{i.username}}">{{ i.username }}</option>
                 {% endfor %}
-            </select>
-            <br><br>
+            </select><br><br>
+            <p>Ստացման Գին</p>
+            <input type="number" name="supPrice" style="display: block; width: 50%; margin: auto; height: 30px;"><br>
             <button type="submit" id="saveButton" style="width: 50%;--c: rgb(93, 93, 202); height:40px;background-color: #3498db82;">Ավելացնել</button>
         </div>
     </div>
 </form>
 
 
-    <br><br><br>
+    <br><br><br><br><br>
 
     <table id="adminTable">
         <thead style="word-wrap: break-word;">
@@ -51,6 +52,7 @@
                 <th>Հաճախորդ</th>
                 <th>Ապրանք</th>
                 <th>Գին</th>
+                <th>Ստացման Գին</th>
                 <th>Ջնջել</th>
                 <th>Փոփոխել</th>
             </tr>
@@ -62,6 +64,7 @@
                     <td>{{ i.customer }}</td>
                     <td>{{ i.productName }}</td>
                     <td>{{ i.productPrice }}</td>
+                    <td>{{ i.supPrice }}</td>
                     <td>
                         <form method="POST" action="{% url 'delete_item' i.id %}">
                             {% csrf_token %}
@@ -76,11 +79,10 @@
         </tbody>
     </table>
 
+{% endblock %}
+
 {% block 'scripts' %}
  
 <script src="{% static 'tables/multipleSelect.js' %}"></script>
     
-{% endblock %}
-
-
 {% endblock %}

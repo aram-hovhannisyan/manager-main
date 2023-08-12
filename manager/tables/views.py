@@ -117,6 +117,7 @@ def save_table_data(request):
         total = json.loads(request.body)['total-sum']
         date = json.loads(request.body)['date']
         joinedTables = User.objects.filter(is_supplier=True, username__in=["Կիրովական", "Արտադրամաս"])
+        items = ItemsModel.productsfor_Customer(request.user)
 
         if len(table_name) == 1:
             Create_old_debt(date=date, user=request.user)
@@ -145,13 +146,15 @@ def save_table_data(request):
                 for row in data:
                     if row['productCount'] == '':
                         row['productCount'] = 0
+                    supTot = items.get(productName=row['productName']).supPrice * int(row['productCount']) 
                     table_item = TableItem.objects.create(
                         table=table,
                         product_name=row['productName'],
                         product_count=row["productCount"],
                         product_price=row['productPrice'],
                         total_price=row['totalPrice'],
-                        customer = request.user
+                        customer = request.user,
+                        supTotal=supTot
                     )
                     table_item.save()
 
@@ -162,7 +165,8 @@ def save_table_data(request):
                         defaults={
                             'product_count': table_item.product_count,
                             'total_price': table_item.total_price,
-                            'table': table
+                            'table': table,
+                            'supTotal': table_item.supTotal
                         }
                     )
                     if not created:
@@ -201,13 +205,15 @@ def save_table_data(request):
                 if row['supplier'] == join.username:
                     if row['productCount'] == '':
                         row['productCount'] = 0
+                    supTot = items.get(productName=row['productName']).supPrice * int(row['productCount'])
                     table_item = TableItem.objects.create(
                         table=table,
                         product_name=row['productName'],
                         product_count=row["productCount"],
                         product_price=row['productPrice'],
                         total_price=row['totalPrice'],
-                        customer = request.user
+                        customer = request.user,
+                        supTotal=supTot
                     )
                     table_item.save()
 
@@ -218,7 +224,8 @@ def save_table_data(request):
                         defaults={
                             'product_count': table_item.product_count,
                             'total_price': table_item.total_price,
-                            'table': table
+                            'table': table,
+                            'supTotal': table_item.supTotal
                         }
                     )
                     if not created:

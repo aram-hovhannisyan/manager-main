@@ -8,6 +8,7 @@ class ItemsModel(models.Model):
     supplier = models.CharField(max_length=50, null = True)
     productName = models.CharField(max_length=50)
     productPrice = models.IntegerField()
+    supPrice = models.IntegerField(null=True)
 
     @staticmethod
     def uniqueProductNames(supplier):
@@ -18,13 +19,11 @@ class ItemsModel(models.Model):
     @staticmethod
     def productsfor_Customer(customer):
         custprod = ItemsModel.objects.filter(customer=customer.username)
-        allprod = ItemsModel.objects.filter(customer="all")
         custprod_distinct = custprod.values('productName').distinct()
-        
-        allprod = allprod.exclude(productName__in=custprod_distinct)
-        
-        queryset = custprod.union(allprod)
-        return queryset
+        theProd = (
+            ItemsModel.objects.filter(customer=customer.username)
+            | ItemsModel.objects.filter(customer="all").exclude(productName__in=custprod_distinct))
+        return theProd
 
     def __str__(self) -> str:
         return f'{self.productName}'
@@ -72,6 +71,8 @@ class TableItem(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     supplier = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='supplier3')
 
+    supTotal = models.IntegerField(null=True)
+
     def __str__(self) -> str:
         return f'{self.product_name}-{self.product_count}'
 
@@ -90,6 +91,9 @@ class BigTableRows(models.Model):
     product_count = models.IntegerField(null=True, default=0)
     total_price = models.IntegerField(null=True,default=0)
     table = models.ForeignKey(UserTable, on_delete=models.CASCADE, null=True)
+    supTotal = models.IntegerField(null=True)
+    
+
 
     def __str__(self) -> str:
         return f'{self.product_name}-{self.product_count} - {self.user}'
