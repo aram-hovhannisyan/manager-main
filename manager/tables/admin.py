@@ -16,7 +16,8 @@ from .models import (
     Week_debt,
     Global_Debt,
     Old_debt,
-    BigTableRows
+    BigTableRows,
+    WaitingForChange
 )
 
 # Register your models here.
@@ -37,3 +38,4 @@ admin.site.register(Global_Debt)
 admin.site.register(Week_debt)
 admin.site.register(Old_debt)
 admin.site.register(BigTableRows)
+admin.site.register(WaitingForChange)

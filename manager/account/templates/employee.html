@@ -45,10 +45,10 @@
               {% for bigtable in BigTables %}
                 {% if bigtable.supplier.username == supplier.username %}
                     {% for row in TableRows %}
-                      {% if row.product_name == product.productName and row.table == bigtable.table and row.table.user == bigtable.table.user %}
-                        <td> {{ row.product_count }}</td>
-                        <td> {{ row.total_price }}</td>
-                        <th style="display: none;"> {{ row.supTotal }}</th>
+                      {% if row.item.product_name == product.productName and row.item.table == bigtable.table and row.item.table.user == bigtable.table.user %}
+                        <td> {{ row.item.product_count }}</td>
+                        <td> {{ row.item.total_price }}</td>
+                        <th style="display: none;"> {{ row.item.supTotal }}</th>
                       {% endif %}
                     {% endfor %}
                 {% endif %}

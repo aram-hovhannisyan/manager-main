@@ -19,7 +19,9 @@ from tables.models import (
     Week_debt,
     Global_Debt,
     Old_debt,
-    BigTableRows
+    BigTableRows,
+    SingleTable,
+    WaitingForChange
 )
 from account.models import (
     User
@@ -203,9 +205,7 @@ def tablesByUser(request):
                 SingleRows.append(r)
         except:
             continue
-
     # Single Tables 
-
     try:
         weekPaymant = Paymant.objects.get(
             customer = request.user,
@@ -239,7 +239,7 @@ def tablesByUser(request):
         defaultDate = single_debt_array[0].strftime("%Y-%m-%d")
     except:
         defaultDate = datetime.now().strftime("%Y-%m-%d")
-
+    is_waiting = len(WaitingForChange.objects.filter(customer=request.user)) != 0
     return render(request, 'tablesbyUser.html', {
         'table': join_page_obj,
         'defaultDate': defaultDate,
@@ -256,8 +256,76 @@ def tablesByUser(request):
         'weekPaymant': weekPaymant,
         'weekDebt': week_debt,
         'oldDebt': old_debt,
-        'globalDebt': globalDebt
+        'globalDebt': globalDebt,
+        'is_waiting': is_waiting
     })
+
+@customer_required
+def mistakes(request, table_id):
+    # kara vtangavor lini ete idnery hamnknen
+    try:
+        table = UserTable.objects.get(id = table_id)
+        rows = TableItem.objects.filter(table=table)
+        context = {
+            'table_id': table_id,
+            'table': table,
+            'rows': rows,
+            'is_joined': False,
+        }
+    except:
+        table = JoinedTables.objects.get(id = table_id)
+        mid = [TableItem.objects.filter(table = tab) for tab in UserTable.objects.filter(joinedTable = table)]
+        rows = []
+        for tab in mid:
+            for i in tab:
+                rows.append(i)
+        context = {
+            'table_id': table_id,
+            'table': table,
+            'rows': rows,
+            'is_joined': True,
+        }
+    if request.method == 'POST':
+        data = json.loads(request.body.decode('utf-8'))
+        # print(data)
+        for item in data:
+            table_item = TableItem.objects.get(id=item["product_id"])
+            if table_item.table.joinedTable:
+                WaitingForChange.objects.create(
+                    table_item=table_item,
+                    newTotal=item['total_price'],
+                    newCount=item['product_count'],
+                    customer=request.user,
+                    date=table_item.table.joinedTable.dateOfCreating
+                )
+            else:
+                WaitingForChange.objects.create(
+                    table_item=table_item,
+                    newTotal=item['total_price'],
+                    newCount=item['product_count'],
+                    customer=request.user,
+                    date=table_item.table.singleTable.dateOfCreating
+                )
+        changeList = WaitingForChange.objects.all()
+        # print(len(changeList))
+        # return HttpResponseRedirect('/account/changes')
+
+    return render(request, 'mistakes.html', context)
+
+@customer_required
+def change(request):
+    rows = WaitingForChange.objects.filter(customer=request.user)
+    return render(request, 'changes.html', {'rows': rows})
+
+@login_required
+def delChange(request, item_id):
+    item = WaitingForChange.objects.get(id=item_id)
+    item.delete()
+    if request.user.is_customer:
+        return HttpResponseRedirect('/account/changes')
+    else:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 # ========================== Customer End  ===================
 
@@ -269,37 +337,79 @@ def employee(request):
     bigTables = BigTable.objects.all()
     suppliers = User.objects.filter(is_supplier=True)
     uniq = ItemsModel.uniqueProductNames(None)
-    # print(tableRows)
-    # print(uniq)
+    is_waiting = len(WaitingForChange.objects.all()) != 0
     return render(request, 'employee.html', {
         'Products': uniq,
         'TableRows': tableRows,
         'BigTables': bigTables,
-        'Suppliers': suppliers
+        'Suppliers': suppliers,
+        'is_waiting': is_waiting
     })
 
 @employee_required
 def allCustomers(request):
-
-    debts = []
     allCustomers = User.objects.filter(is_customer = True)
     allSuppliers = User.objects.filter(is_supplier = True)
-    # for i in 
     globDebts = []
     for cust in allCustomers:
         try:
             latest_global = Global_Debt.objects.filter(customer=cust).latest('timeOfCreating')
-            globDebts.append([cust, latest_global.debt])
+            globDebts.append([cust, latest_global.debt, len(WaitingForChange.objects.filter(customer=cust)) != 0])
+            print(cust.id)
         except:
-             globDebts.append([cust, 0])
-    for i in allCustomers:
-        debts.append([i, int(Debt.sumOfEveryUser(i))])
-
+            globDebts.append([cust, 0, len(WaitingForChange.objects.filter(customer=cust)) != 0])
     return render(request, 'work.html',{
         'allCustomers':allCustomers,
         'debts': globDebts,
         'allSuppliers': allSuppliers,
     })
+
+@employee_required
+def endorse(request, user_id):
+    page_user = User.objects.get(id=user_id)
+    rows = WaitingForChange.objects.filter(customer=page_user)
+    return render(request, 'endorse.html', {'rows': rows, 'page_user':page_user})
+
+
+@employee_required
+def endorseChange(request, item_id):
+    item = TableItem.objects.get(id=item_id)
+    tochange_item = WaitingForChange.objects.get(table_item=item)
+    try:
+        sup_price = item.supTotal / item.product_count
+    except:
+        sup_price = 0
+    difference = item.total_price - tochange_item.newTotal
+    latest_global_debt = Global_Debt.objects.filter(customer=tochange_item.customer).latest('timeOfCreating')
+    Global_Debt.objects.create(
+        customer = tochange_item.customer,
+        date = tochange_item.date,
+        debt = latest_global_debt.debt - difference,
+    )
+
+    if tochange_item.table_item.table.joinedTable:
+        tochange_debt = Debt.objects.get(
+            date=tochange_item.date,
+            customer=tochange_item.customer,
+            joined=True,
+        )
+    else:
+        tochange_debt = Debt.objects.get(
+            date=tochange_item.date,
+            customer=tochange_item.customer,
+            single=True,
+        )
+    tochange_debt.debt -= difference
+    tochange_debt.save()
+
+
+    item.product_count = tochange_item.newCount
+    item.total_price = tochange_item.newTotal
+    item.supTotal = tochange_item.newCount * sup_price
+    item.save()
+    tochange_item.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 
 @employee_required
 def customerTables(request, user_id):
@@ -497,8 +607,6 @@ def totalPage(request):
             debt_array.append([str(debt.date),joinTable_debt.aggregate(sum = Sum('debt'))['sum'], single_debt_dict[str(debt.date)]])
         except:
             debt_array.append([str(debt.date),joinTable_debt.aggregate(sum = Sum('debt'))['sum'], ''])
-
-
     # PAYMANT
     try:
         total_payments_money = Paymant.objects.filter(

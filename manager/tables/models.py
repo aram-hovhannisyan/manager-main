@@ -70,11 +70,18 @@ class TableItem(models.Model):
     total_price = models.IntegerField(null=True,default=0)
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     supplier = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='supplier3')
-
     supTotal = models.IntegerField(null=True)
 
     def __str__(self) -> str:
         return f'{self.product_name}-{self.product_count}'
+
+class WaitingForChange(models.Model):
+    table_item = models.ForeignKey(TableItem, on_delete=models.CASCADE)
+    newTotal = models.IntegerField()
+    newCount = models.IntegerField()
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    dateofCreating = models.DateTimeField(auto_now=True)
+    date = models.DateField()
 
 class BigTable(models.Model):
     supplier = models.ForeignKey(User, on_delete=models.CASCADE,related_name='supplier', null = True)
@@ -87,16 +94,11 @@ class BigTable(models.Model):
 class BigTableRows(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null = True)
     supplier = models.ForeignKey(User, on_delete=models.CASCADE,related_name='supplier1', null = True)
-    product_name = models.CharField(max_length=50)
-    product_count = models.IntegerField(null=True, default=0)
-    total_price = models.IntegerField(null=True,default=0)
-    table = models.ForeignKey(UserTable, on_delete=models.CASCADE, null=True)
-    supTotal = models.IntegerField(null=True)
-    
-
+    item = models.ForeignKey(TableItem, on_delete=models.CASCADE, null=True)
+    porduct_name = models.CharField(max_length=255, null=True)
 
     def __str__(self) -> str:
-        return f'{self.product_name}-{self.product_count} - {self.user}'
+        return f'{self.user}'
 
 class Debt(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

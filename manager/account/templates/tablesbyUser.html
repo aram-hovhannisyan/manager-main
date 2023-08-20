@@ -9,6 +9,30 @@
 
 {% endblock %}
 
+{% block 'title' %}
+    <title>{{user}}'s Tables</title>
+{% endblock %}
+
+
+{% block cav %}
+    <a style="height: 40px;" href="{% url 'changes' %}">
+        Ուղղումներ
+    {% if is_waiting %}
+        <div 
+            style="
+            background-color: red;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: relative;
+            bottom: 36px;
+            left: 117px;
+            z-index: 10000;
+            ">
+        </div>
+    {% endif %}
+    </a>
+{% endblock %}
 
 {% block 'body' %}
 
@@ -45,6 +69,9 @@
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <td colspan="4" style="color: rgb(189, 70, 70); font-size: 18px;border-bottom: 1px solid black;">ՀԻն Պարտք {{oldDebt.debt}}</td>
+        </tr>
         {% for debt in joinedDebt %}
             <tr>
                 <td>{{debt.0}}</td>
@@ -54,10 +81,10 @@
             </tr>
         {% endfor %}
         <tr id="total-row">
-            <td>Ընդ</td>
-            <td></td>
-            <td></td>
-            <td style="color: red;"></td>
+            <td style="border-bottom: 1px solid black;border-top: 1px solid black;color: red;">Ընդ</td>
+            <td style="border-bottom: 1px solid black;border-top: 1px solid black;"></td>
+            <td style="border-bottom: 1px solid black;border-top: 1px solid black;"></td>
+            <td style="border-bottom: 1px solid black;border-top: 1px solid black;color: red;"></td>
         </tr>
         <tr>
             <td>Ռոճիկ</td>
@@ -78,14 +105,10 @@
             <td>{{weekPaymant.money}}</td>
         </tr>
         <tr>
-            <td rowspan="2" style="border-top: 1px solid black;">Մնաց</td>
-            <!-- <td rowspan="2" style="border-top: 1px solid black;"></td> -->
-            <td colspan="2" style="border-top: 1px solid black; color: red;font-size: 18px;">ՀԻն {{oldDebt.debt}}</td>
-            <td rowspan="2" style="border-top: 1px solid black;">{{globalDebt.debt}}</td>
+            <td colspan="2" style="color: red; font-size: 18px;border-top: 2px solid black;">Նոր Պարտք {{weekDebt.debt}}</td>
+            <td colspan="2" style="color: red; font-size: 18px; border-top: 2px solid black;">Ընդհանուր Պարտք {{globalDebt.debt}}</td>
         </tr>
-        <tr>
-            <td colspan="2" style="color: red;font-size: 18px;">Նոր {{weekDebt.debt}}</td>
-        </tr>
+
     </tbody>
 
 </table>
@@ -147,7 +170,9 @@
                 <td id="totalPrice"></td>
             </tr>
         </tfoot>           
-    </table>
+    </table><br>
+    <a href="{% url 'mistake' join.id %}" style="text-decoration: none;"><button id="{{table.id}}" class="mistakes">Փոխել</button></a>
+
     <br>
     <br>
     <br>
@@ -202,6 +227,8 @@
             </tr>
         </tfoot>           
     </table>
+    <br>
+    <a href="{% url 'mistake' table.id %}" style="text-decoration: none;"><button id="{{table.id}}" class="mistakes">Փոխել</button></a>
     <br><br><br>
     {% endfor %}
 {% endif %}
@@ -223,41 +250,6 @@
         {% endif %}
     </span>
 </div>
-
-<!-- <script>
-        totalSum = 0;
-        rows = document.querySelectorAll('#debt');
-        rows.forEach((row) => {
-            const value = parseFloat(row.textContent);
-            if (!isNaN(value)) {
-            totalSum += value;
-            }
-        });
-        totalRow = document.createElement('tr');
-        totalRow.innerHTML = `
-            <td style="color: blue; font-size: 25px; border-top: 2px solid black;">Total</td>
-            <td style="color: blue; font-size: 25px; border-top: 2px solid black;">${totalSum} dram</td>
-        `;
-        document.querySelector('#debtBody').append(totalRow);
-</script> -->
-
-<!-- <script>
-    // get all date cells in the debt table
-    dateCells = document.querySelectorAll('#debtBody td:first-child');
-    // add a click event listener to each date cell
-    dateCells.forEach(function(dateCell) {
-        dateCell.addEventListener('click', function() {
-            const date = dateCell.textContent.trim();
-            // loop through all tables with id 'myTable'
-            document.querySelectorAll('table[id^="myTable"]').forEach(function(table) {
-                if (table.querySelector('tfoot td:first-child').textContent.trim() === date) {
-                    // scroll to the table with the same date
-                    table.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
-                }
-            });
-        });
-    });
-</script> -->
 
 {% endblock %}
 

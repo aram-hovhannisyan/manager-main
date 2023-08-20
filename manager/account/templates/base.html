@@ -16,10 +16,9 @@
 
     {% endblock %}
 </head>
-<body style="background-image: url({% static 'img/background.jpg' %});">
-    <header style="background-image: url({% static 'img/background.jpg' %});">
+<body style="background-image: url({% static 'img/background.jpg' %})">
+    <header style="background-image: url({% static 'img/background.jpg' %})">
       <nav>
-
         {% if user.is_authenticated  %}
             {% block header %}
                 {% if header.lenght > 0 %}
@@ -44,18 +43,37 @@
                 {% if nav.lenght > 0 %}
                     {{ nav }}
                 {% else %}
-                    <a href="{% url 'customers' %}">Աշխատանք</a>
+                    <a style="height: 40px;" href="{% url 'customers' %}">Աշխատանք
+                        {% if is_waiting %}
+                            <div style =
+                                "
+                                background-color: red;
+                                width: 10px;
+                                height: 10px;
+                                border-radius: 50%;
+                                position: relative;
+                                bottom: 36px;
+                                left: 123px;
+                                z-index: 10000;
+                                ">
+                            </div>
+                        {% endif %}
+                    </a>
                 {% endif %}
             {% endblock %}
         {% elif user.is_customer %}
-            <a href="{% url 'tablesbyuser' %}">Ցուցակներ</a>
+            {% block cav %}
+                {% if cav.lenght > 0 %}
+                    {{ cav }}
+                {% else %}
+                    <a href="{% url 'tablesbyuser' %}">Ցուցակներ</a>
+                {% endif %}
+            {% endblock %}
         {% elif user.is_supplier %}
             <a href="{% url 'orderedProducts' %}">Դատարկ</a>
-        
         {% endif %}
         <a href="{% url 'logout' %}">Ելք</a>
       </nav>
-
     </header>
     <br>
     <br>

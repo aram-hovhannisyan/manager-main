@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+
 from .models import (
     ItemsModel,
     TableItem,
@@ -41,7 +43,7 @@ def home(request):
 
 def Create_old_debt(date, user):
     dateObject = datetime.strptime(date, "%Y-%m-%d").date() 
-    newUntil = dateObject + timedelta(days=4) 
+    newUntil = dateObject + timedelta(days=5) 
     try:
         Old_debt.objects.get(
             date = date,
@@ -120,8 +122,28 @@ def save_table_data(request):
         items = ItemsModel.productsfor_Customer(request.user)
 
         if len(table_name) == 1:
-            Create_old_debt(date=date, user=request.user)
+            try:
+                SingleTable.objects.get(
+                    customer=request.user,
+                    dateOfCreating=date
+                )
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            except:
+                pass
+        else:
+            try:
+                JoinedTables.objects.get(
+                    customer=request.user,
+                    dateOfCreating=date
+                )
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            except:
+                pass
 
+
+
+        if len(table_name) == 1:
+            Create_old_debt(date=date, user=request.user)
         try:
             SingleTable.objects.get(dateOfCreating = date, customer = request.user)
         except:
@@ -158,21 +180,22 @@ def save_table_data(request):
                     )
                     table_item.save()
 
-                    big_tab, created = BigTableRows.objects.get_or_create(
-                        user=request.user,
-                        supplier=join,
-                        product_name=table_item.product_name,
-                        defaults={
-                            'product_count': table_item.product_count,
-                            'total_price': table_item.total_price,
-                            'table': table,
-                            'supTotal': table_item.supTotal
-                        }
-                    )
-                    if not created:
-                        big_tab.product_count = table_item.product_count
-                        big_tab.total_price = table_item.total_price
-                        big_tab.table = table
+                    try:
+                        big_tab = BigTableRows.objects.get(
+                            user=request.user, 
+                            supplier=join,
+                            porduct_name=row['productName']
+                            )
+                        big_tab.item = table_item
+                        big_tab.save()
+                    except BigTableRows.DoesNotExist:
+                        # Create a new BigTableRows object since it doesn't exist for the user and supplier.
+                        big_tab = BigTableRows.objects.create(
+                            user=request.user, 
+                            supplier=join, 
+                            item=table_item,
+                            porduct_name=row['productName']
+                            )
                         big_tab.save()
 
                 try:
@@ -216,23 +239,25 @@ def save_table_data(request):
                         supTotal=supTot
                     )
                     table_item.save()
-
-                    big_tab, created = BigTableRows.objects.get_or_create(
-                        user=request.user,
-                        supplier=join,
-                        product_name=table_item.product_name,
-                        defaults={
-                            'product_count': table_item.product_count,
-                            'total_price': table_item.total_price,
-                            'table': table,
-                            'supTotal': table_item.supTotal
-                        }
-                    )
-                    if not created:
-                        big_tab.product_count = table_item.product_count
-                        big_tab.total_price = table_item.total_price
-                        big_tab.table = table
+      
+                    try:
+                        big_tab = BigTableRows.objects.get(
+                            user=request.user, 
+                            supplier=join,
+                            porduct_name=row['productName']
+                            )
+                        big_tab.item = table_item
                         big_tab.save()
+                    except BigTableRows.DoesNotExist:
+                        # Create a new BigTableRows object since it doesn't exist for the user and supplier.
+                        big_tab = BigTableRows.objects.create(
+                            user=request.user, 
+                            supplier=join, 
+                            item=table_item,
+                            porduct_name=row['productName']
+                            )
+                        big_tab.save()
+
 
             try:
                 bigtable = BigTable.objects.get(supplier=join, user=request.user)
@@ -262,7 +287,9 @@ def Paymant_View(request):
                 date = request.POST.get('date')
                 )
             latest_global_debt = Global_Debt.objects.filter(customer = request.user).latest('timeOfCreating')
-            debt_sum = latest_global_debt.debt - debt.money - debt.returned - debt.salary
+            old_debt = Old_debt.objects.get(date=request.POST.get('date'), customer=request.user).debt
+            print(old_debt)
+            debt_sum = latest_global_debt.debt - debt.money - debt.returned - debt.salary - old_debt
             weekDebt = Week_debt.objects.create(
                 customer = request.user,
                 date = request.POST.get('date'),
@@ -270,7 +297,7 @@ def Paymant_View(request):
             )
             gloabalDebt = Global_Debt.objects.create(
                 customer = request.user,
-                debt = debt_sum,
+                debt = debt_sum + old_debt,
                 date = request.POST.get('date')
             )
 

@@ -31,6 +31,9 @@
         </tr>
     </thead>
     <tbody>
+        <tr>
+            <td colspan="4" style="color: rgb(189, 70, 70); font-size: 18px;border-bottom: 1px solid black;">ՀԻն Պարտք {{oldDebt.debt}}</td>
+        </tr>
         {% for debt in joinedDebt %}
             <tr>
                 <td>{{debt.0}}</td>
@@ -64,20 +67,12 @@
             <td>{{weekPaymant.money}}</td>
         </tr>
         <tr>
-            <td rowspan="2" style="border-top: 1px solid black;">Մնաց</td>
-            <!-- <td rowspan="2" style="border-top: 1px solid black;"></td> -->
-            <td colspan="2" style="border-top: 1px solid black; color: red;font-size: 18px;">ՀԻն {{oldDebt.debt}}</td>
-            <td rowspan="2" style="border-top: 1px solid black;">{{globalDebt.debt}}</td>
-        </tr>
-        <tr>
-            <td colspan="2" style="color: red;font-size: 18px;">Նոր {{weekDebt.debt}}</td>
+            <td colspan="2" style="color: red; font-size: 18px;border-top: 2px solid black;">Նոր Պարտք {{weekDebt.debt}}</td>
+            <td colspan="2" style="color: red; font-size: 18px;border-top: 2px solid black;">Ընդհանուր Պարտք {{globalDebt.debt}}</td>
         </tr>
     </tbody>
 
 </table>
-
-
-
 
 <br><br><br>
 
@@ -216,17 +211,5 @@
 
 
 {% block 'scripts' %}
-<!-- <script>
-    // loop through all tables with id 'myTable'
-    document.querySelectorAll('table[id^="myTable"]').forEach(function(table) {
-    let total = 0;
-    // loop through all total_price cells in the current table and add their value to the total
-    table.querySelectorAll('#total_price').forEach(function(cell) {
-        total += parseInt(cell.textContent);
-    });
-    // set the total value in the appropriate #totalPrice cell
-    table.querySelector('#totalPrice').textContent = total;
-    });
-</script> -->
 <script src="{% static 'js/customer/addTotalForTable.js'%}"></script>
 {% endblock %}

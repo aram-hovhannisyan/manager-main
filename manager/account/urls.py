@@ -28,6 +28,13 @@ urlpatterns = [
     path('customers/', views.allCustomers, name="customers"),
     path('customers/<int:user_id>/', views.customerTables, name='customertables'),
     path('tablesbycustomer/', views.tablesByUser, name= 'tablesbyuser'),
+  
+    path('mistake/<int:table_id>/', views.mistakes, name='mistake'),
+    path('changes/', views.change, name="changes"),
+    path('deletechanges/<int:item_id>/', views.delChange, name="deleteChange"),
+    path('endorse/<int:user_id>/', views.endorse, name='endorse'),
+    path('endorsechanges/<int:item_id>/', views.endorseChange, name='endorseChange'),
+
     path('customersforAdmin/', views.allCustomersforAdmin, name='customersforadmin'),
     
     path('customerproducts/<int:user_id>/', views.customersProducts, name = 'customersproducts'),

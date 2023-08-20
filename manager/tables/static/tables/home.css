@@ -310,3 +310,14 @@ table tbody tr td:first-child{
   width: 100%;
   text-align: center;
 }
+
+.mistakes{
+  margin: auto;
+  width: 100px;
+  height: 35px;
+  background-color: rgba(21, 48, 74, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
