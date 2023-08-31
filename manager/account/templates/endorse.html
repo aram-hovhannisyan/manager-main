@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block 'links' %}
+    <link rel="stylesheet" href="{% static 'tables/home.css' %}">
+{% endblock %}
+
+
+{% block 'title' %}
+    <title>Endorse Mistakes</title>
+{% endblock %}
+
+{% block header %}
+    <h1 style="color:white;">Սխալների Ողղում({{user.username}})</h1>
+{% endblock %}
+
+{% block 'body' %}
+<table>
+    <thead>
+        <tr>
+            <th>Ապրանք</th>
+            <th>Քանակ</th>
+            <th>Արժեք</th>
+            <th>Ընդհանուր</th>
+            <th>Ամսաթիվ</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+            <tr>
+                <td style="text-align: center;">{{row.table_item.product_name}}</td>
+                <td style="text-align: center;">{{row.table_item.product_count}} => {{row.newCount}}</td>
+                <td style="text-align: center;">{{row.table_item.product_price}}</td>
+                <td style="text-align: center;">{{row.table_item.total_price}} => {{row.newTotal}}</td>
+                <td style="text-align: center;">{{row.table_item.table.dateOfCreating|format_date}}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border-bottom: 1px solid black">
+                    <a href="{% url 'endorseChange' row.table_item.id %}" 
+                        style="text-decoration: none;">
+                        <button class="mistakes" style="width: 120px; background-color: rgb(36, 194, 34);">
+                            Հաստատել
+                        </button>
+                    </a>
+                </td>
+                <td style="border-bottom: 1px solid black"></td>
+                <td colspan="2" style="border-bottom: 1px solid black">
+                    <a href="{% url 'deleteChange' row.id %}" 
+                        style="text-decoration: none;">
+                        <button class="mistakes" style="width: 120px; background-color: rgb(211, 65, 65);">
+                            Մերժել
+                        </button>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
