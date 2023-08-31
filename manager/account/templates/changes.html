@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block 'links' %}
+    <link rel="stylesheet" href="{% static 'tables/home.css' %}">
+{% endblock %}
+
+{% block 'title' %}
+    <title>Changes</title>
+{% endblock %}
+
+{% block 'body' %}
+    <table>
+        <thead>
+            <tr>
+                <th>Ապրանք</th>
+                <th>Քանակ</th>
+                <th>Արժեք</th>
+                <th>Ընդհանուր</th>
+                <th>Ամսաթիվ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td style="text-align: center;">{{row.table_item.product_name}}</td>
+                    <td style="text-align: center;">{{row.table_item.product_count}} => {{row.newCount}}</td>
+                    <td style="text-align: center;">{{row.table_item.product_price}}</td>
+                    <td style="text-align: center;">{{row.table_item.total_price}} => {{row.newTotal}}</td>
+                    <td style="text-align: center;">{{row.table_item.table.dateOfCreating|format_date}}
+                        <a
+                        href="{% url 'deleteChange' row.id %}">
+                        <button style="width: 80px;height: 20px;"
+                        slyle="text-decoration:none;"
+                        >Ջնջել</button></td></a>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

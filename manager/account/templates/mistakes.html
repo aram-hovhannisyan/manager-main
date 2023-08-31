@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block 'links' %}
+
+<link rel="stylesheet" href="{% static 'tables/home.css' %}">
+
+{% endblock %}
+
+{% block 'title' %}
+<title>Mistake</title>
+{% endblock %}
+
+{% block 'body' %}
+
+    {% if is_joined %}
+        <table id="myTable">
+            </thead>
+            <thead>
+                <tr>
+                    <th>
+                        Ապրանք
+                    </th>
+                    <th>
+                        Քանակ
+                    </th>
+                    <th>
+                        Գին
+                    </th>
+                    <th>
+                        Ընդհանուր
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>
+                            <h3>{{ row.product_name }}</h3>
+                        </td>
+                        <td oninput="setTot('{{row.product_price}}', '{{ row.product_name }}')" contenteditable="true" default="{{row.product_count}}" id="{{row.id}}" class="editable">
+                            <h3>{{ row.product_count }}</h3>
+                        </td>
+                        <td>
+                            <h3>{{ row.product_price }}</h3>
+                        </td>
+                        <td id="{{row.product_name}}" class="totalCell">
+                            <h3>{{ row.total_price }}</h3>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="footer">
+                    <td>Արտադրամաս</td>
+                    <td>{{table.dateOfCreating|format_date}}</td>
+                    <td>Total</td>
+                    <td id="totalPrice"></td>
+                </tr>
+            </tfoot>           
+        </table><br>
+    
+    {% else %}
+        <table id="myTable">
+            <thead>
+                <tr>
+                    <th>
+                        Ապրանք
+                    </th>
+                    <th>
+                        Քանակ
+                    </th>
+                    <th>
+                        Գին
+                    </th>
+                    <th>
+                        Ընդհանուր
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        <td>
+                            <h3>{{ row.product_name }}</h3>
+                        </td>
+                        <td oninput=
+                        "setTot('{{row.product_price}}', '{{ row.product_name }}')"
+                        contenteditable="true"
+                        name="{{row.product_name}}"
+                        default="{{row.product_count}}"
+                        id="{{row.id}}" 
+                        class="editable">
+                            <h3>{{ row.product_count }}</h3>
+                        </td>
+                        <td>
+                            <h3>{{ row.product_price }}</h3>
+                        </td>
+                        <td id="{{row.product_name}}" class="totalCell">
+                            <h3>{{ row.total_price }}</h3>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="footer">
+                    <td>Այլ․Ապրանք</td>
+                    <td>{{table.dateOfCreating|format_date}}</td>
+                    <td>Total</td>
+                    <td id="totalPrice"></td>
+                </tr>
+            </tfoot>           
+        </table><br>
+    {% endif %}
+    <a href="{% url 'tablesbyuser' %}" style="text-decoration: none;"><button id="saveChanges" class="mistakes">Պահպանել</button></a>
+
+{% endblock %}
+
+{% block 'scripts' %}
+    <script src="{% static 'js/customer/mistake.js'%}"></script>
+{% endblock %}
