@@ -62,7 +62,11 @@ function saveTableData() {
     data = {
       data: rowData,
       'total-sum': totalSum, // Round the total sum to 2 decimal places
-      table_name: ['Table' + `${Math.random()}`.substring(2,10), 'Table' + `${Math.random()}`.substring(2,10)],
+      table_name: [
+        'Table' + `${Math.random()}`.substring(2,10),
+        'Table' + `${Math.random()}`.substring(2,10),
+        'Table' + `${Math.random()}`.substring(2,10)
+      ],
       'date': date
     };
   } else{

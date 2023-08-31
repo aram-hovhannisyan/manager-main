@@ -118,7 +118,7 @@ def save_table_data(request):
         table_name = json.loads(request.body)['table_name']
         total = json.loads(request.body)['total-sum']
         date = json.loads(request.body)['date']
-        joinedTables = User.objects.filter(is_supplier=True, username__in=["Կիրովական", "Արտադրամաս"])
+        joinedTables = User.objects.filter(is_supplier=True, username__in=["Կիրովական", "Արտադրամաս", "Փուռ"])
         items = ItemsModel.productsfor_Customer(request.user)
 
         if len(table_name) == 1:
@@ -258,7 +258,6 @@ def save_table_data(request):
                             )
                         big_tab.save()
 
-
             try:
                 bigtable = BigTable.objects.get(supplier=join, user=request.user)
                 bigtable.table = table
@@ -272,8 +271,9 @@ def save_table_data(request):
                 
         create_debt(date=date, user=request.user, total=total, joined=True)
 
-
         return JsonResponse({'message': 'Table data saved successfully'})
+        # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    
 
 def Paymant_View(request):
     if request.method == 'POST':
