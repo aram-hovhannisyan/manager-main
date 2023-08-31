@@ -100,7 +100,7 @@ def customer(request):
     tablesUsers = UserTable.objects.all()
     items = ItemsModel.productsfor_Customer(request.user)
     tableRows = TableItem.objects.all()
-    joinedTables = User.objects.filter(is_supplier=True, username__in=["Կիրովական", "Արտադրամաս"])
+    joinedTables = User.objects.filter(is_supplier=True, username__in=["Կիրովական", "Արտադրամաս", "Փուռ"])
     suppliers = User.objects.filter(is_supplier=True).exclude(username__in=joinedTables.values('username')) 
 
     return render(request, 'customer.html', {
@@ -768,5 +768,12 @@ def supplier(request):
 
 @supplier_required
 def orderedProducts(request):
-    return render(request, 'ordered_Product.html', {})
+    items_list = []
+    uniq_lsit = []
+    items = ItemsModel.objects.filter(supplier=request.user.username, )
+    for i in items:
+        if i.productName not in uniq_lsit:
+            uniq_lsit.append(i.productName)
+            items_list.append({'productName': i.productName, 'supPrice': i.supPrice})
+    return render(request, 'ordered_Product.html', {'items': items_list})
 # \\\\\\\\\\\\\\\\\\\\\\\\ Supplier End     \\\\\\\\\\\\\\\\\\  

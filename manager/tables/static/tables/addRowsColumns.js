@@ -1,4 +1,6 @@
 // Function to add total row at the end of each table
+let totObj = {}
+
 function addTotalRow(table) {
   const tbody = table.querySelector('tbody');
   const rows = tbody.querySelectorAll('tr');
@@ -65,7 +67,6 @@ function addTotalColumn(table) {
     const totalCell = document.createElement('td');
     const totalSumCell = document.createElement('td');
     const supTotalCell = document.createElement('td')
-    
 
     supTotalCell.classList.add('supTotal')
 
@@ -90,6 +91,8 @@ function addTotalColumn(table) {
     lastSupCellSum += supTotal
     if (i == rows.length - 1){
       supTotalCell.textContent = lastSupCellSum
+      let attr = table.getAttribute('name')
+      totObj[attr]=totalSum
     }
     
     supTotalCell.style.display = 'none'
@@ -107,3 +110,26 @@ tables.forEach(table => {
   addTotalRow(table);
   addTotalColumn(table);
 });
+
+let Summary = 0 
+for (const i in totObj) {
+  if(i !== 'Այլ.ապրանք'){
+    Summary += totObj[i]
+  }
+}
+
+tables.forEach((table)=>{
+  if(table.getAttribute('name') === 'Կիրովական'){
+    let theBody = table.querySelector('tbody')
+    let theRows = theBody.querySelector('tr')
+    let newRow = document.createElement('tr')
+    let lenRow = theRows.querySelectorAll('td').length //
+    let newCell = document.createElement('td') //
+    newCell.textContent = Summary //
+    newCell.setAttribute('colspan', lenRow) //
+    newCell.style.textAlign = 'end'
+    newCell.style.borderTop = '1px solid black'
+    newRow.appendChild(newCell) // 
+    theBody.appendChild(newRow) // 
+  }
+})
