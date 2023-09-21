@@ -13,6 +13,8 @@ def format_datetime(value):
 
 @register.filter
 def format_date(value):
+    if not value:
+        return value
     return value.strftime('%d.%m.%Y')
 
 @register.filter
@@ -22,3 +24,4 @@ def sub(value, arg):
 @register.filter
 def add(value, arg):
     return value + arg
+

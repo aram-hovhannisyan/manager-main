@@ -100,6 +100,9 @@ function saveTableData() {
       // Handle the error here if needed
       console.error(error);
     });
+    location.reload()
+
+
 }
 
 // Add event listener to submit buttons

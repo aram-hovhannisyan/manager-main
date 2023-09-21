@@ -14,7 +14,7 @@
     <table id="adminTable">
         <thead>
             <tr>
-                <th>Հաճախորդ</th>
+                <th>Մատակարար</th>
                 <th>Ապրանք</th>
                 <th>Գին</th>
                 <th>Ջնջել</th>
@@ -24,7 +24,7 @@
         <tbody>
             {% for i in products %}
                 <tr>
-                    <td>{{ i.customer }}</td>
+                    <td>{{ i.supplier }}</td>
                     <td>{{ i.productName }}</td>
                     <td>{{ i.productPrice }}</td>
                     <td>

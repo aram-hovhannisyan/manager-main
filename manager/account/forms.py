@@ -77,3 +77,8 @@ class SalaryForm(forms.Form):
     customer = forms.CharField()
     date = forms.DateField()
     salary = forms.IntegerField()
+
+class ChangeItemsName(forms.Form):
+    fromName = forms.CharField()
+    toName = forms.CharField()
+

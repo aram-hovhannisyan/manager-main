@@ -1,3 +1,21 @@
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    let cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      // Check if the cookie name matches the CSRF cookie name
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+
+
 function sendOrder(sup_Id, sup_username) {
   // Create a new XMLHttpRequest object
   let xhr = new XMLHttpRequest();
@@ -11,10 +29,10 @@ function sendOrder(sup_Id, sup_username) {
 
   // Set the CSRF token in the request headers
   xhr.setRequestHeader('X-CSRFToken', csrftoken);
-
+  // console.log(sup_Id);
   let data = {
     supplier_id: sup_Id,
-    nameOftable: 'Table' + `${Math.random()}`.substring(2,10),
+    nameOftable: 'Table' + `${Math.random()}`.substring(2,12),
     sup_name: sup_username
   };
 
@@ -43,18 +61,3 @@ function sendOrder(sup_Id, sup_username) {
 }
 
 // Helper function to get the CSRF token from the cookie
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-    let cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      let cookie = cookies[i].trim();
-      // Check if the cookie name matches the CSRF cookie name
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
-  }
-  return cookieValue;
-}

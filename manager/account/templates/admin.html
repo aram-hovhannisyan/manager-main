@@ -45,39 +45,24 @@
 
     <br><br><br><br><br>
 
-    <table id="adminTable">
-        <thead style="word-wrap: break-word;">
-            <tr>
-                <th>Մատակարարող</th>
-                <th>Հաճախորդ</th>
-                <th>Ապրանք</th>
-                <th>Գին</th>
-                <th>Ստացման Գին</th>
-                <th>Ջնջել</th>
-                <th>Փոփոխել</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in Items %}
-                <tr>
-                    <td>{{ i.supplier }}</td>
-                    <td>{{ i.customer }}</td>
-                    <td>{{ i.productName }}</td>
-                    <td>{{ i.productPrice }}</td>
-                    <td>{{ i.supPrice }}</td>
-                    <td>
-                        <form method="POST" action="{% url 'delete_item' i.id %}">
-                            {% csrf_token %}
-                            <button type="submit" id="saveButton" class="svB">Ջնջել</button>
-                        </form>
-                    </td>
-                    <td>
-                        <a href="{% url 'edit_item' i.id %}"><button id="saveButton" class="svB">Փոփոխել</button></a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<form method="POST" action="/changeitemsname/">
+    {% csrf_token %}
+    <div id="addProductDiv" >
+        
+        <div id="ProductInputs"  style="height: 250px;"><br>
+            <p>Ապրանքի ՀԻն Անունը</p>
+            <select name="fromName" style="width: 50%; height: 60px;">
+                {% for i in Uniq %}
+                    <option value="{{i.productName}}">{{i.productName}}</option>
+                {% endfor %}
+            </select><br><br>
+            <p>Ապրանքի Նոր Անունը</p>
+            <input type="text" name="toName" style="display: block; width: 50%; margin: auto; height: 30px;"><br>
+            <button type="submit" id="saveButton" style="width: 50%;--c: rgb(93, 93, 202); height:40px;background-color: #3498db82;">Հաստատել</button>
+        </div>
+    </div>
+</form>
+
 
 {% endblock %}
 

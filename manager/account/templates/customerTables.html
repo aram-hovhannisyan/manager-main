@@ -37,8 +37,8 @@
         {% for debt in joinedDebt %}
             <tr>
                 <td>{{debt.0}}</td>
-                <td>{{debt.1}}</td>
-                <td>{{debt.2}}</td>
+                <td id="debtNum" date="{{debt.0}}">{{debt.1}}</td>
+                <td id="debtNum" date="{{debt.0}}">{{debt.2}}</td>
                 <td></td>
             </tr>
         {% endfor %}
@@ -101,6 +101,7 @@
                     {% for row in JoinRows %}
 
                         {% if table == row.table %}
+                            {% if row.product_price != 0 %}
                             <tr>
                                 <td>
                                     <h3>{{ row.product_name }}</h3>
@@ -115,6 +116,7 @@
                                     <h3>{{ row.total_price }}</h3>
                                 </td>
                             </tr>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                 {% endif %}
@@ -204,12 +206,25 @@
         {% endif %}
     </span>
 </div>
-
+<div id="scrollToTop" class="scroll-to-top"
+    style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        display: none;
+    "
+>&#8593;</div>
 </main>
 
 {% endblock %}
 
 
 {% block 'scripts' %}
+
 <script src="{% static 'js/customer/addTotalForTable.js'%}"></script>
+<script src="{% static 'js/employee/empScroller.js' %}"></script>
+<script src="{% static 'js/customer/miniScroller.js' %}"></script>
+
 {% endblock %}

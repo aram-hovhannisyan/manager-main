@@ -33,6 +33,16 @@ from account.forms import PaymantForm
 
 # Create your views here.
 
+yerevan_schools = [
+    '148', '44',
+    '171', '136',
+    '177', '48',
+    '87', '93',
+    '117', '188',
+    '90', '60',
+    '104', '170',
+    '54', '189',
+]
 
 def home(request):
     User = request.user
@@ -176,6 +186,7 @@ def save_table_data(request):
                         product_price=row['productPrice'],
                         total_price=row['totalPrice'],
                         customer = request.user,
+                        supplier = join,
                         supTotal=supTot
                     )
                     table_item.save()
@@ -201,12 +212,14 @@ def save_table_data(request):
                 try:
                     bigtable = BigTable.objects.get(supplier=join, user=request.user)
                     bigtable.table = table
+                    bigtable.modifiedDate = date
                     bigtable.save()
                 except BigTable.DoesNotExist:
                     bigtable = BigTable.objects.create(
                         supplier=join,
                         table=table,
-                        user=request.user
+                        user=request.user,
+                        modifiedDate=date
                         )
             create_debt(date=date, user=request.user, total=total, joined = False)
 
@@ -217,7 +230,12 @@ def save_table_data(request):
             customer = request.user,
             dateOfCreating = date
             )
+        counter = 0
         for join, tabNam in zip(joinedTables, table_name):
+            counter += 1
+            if request.user.username in yerevan_schools and counter == 1:
+                continue
+
             table = UserTable.objects.create(
                 user = request.user,
                 tableName = tabNam,
@@ -236,6 +254,7 @@ def save_table_data(request):
                         product_price=row['productPrice'],
                         total_price=row['totalPrice'],
                         customer = request.user,
+                        supplier = join,
                         supTotal=supTot
                     )
                     table_item.save()
@@ -261,12 +280,14 @@ def save_table_data(request):
             try:
                 bigtable = BigTable.objects.get(supplier=join, user=request.user)
                 bigtable.table = table
+                bigtable.modifiedDate = date
                 bigtable.save()
             except BigTable.DoesNotExist:
                 bigtable = BigTable.objects.create(
                     supplier=join,
                     table=table,
-                    user=request.user
+                    user=request.user,
+                    modifiedDate=date
                     )
                 
         create_debt(date=date, user=request.user, total=total, joined=True)
@@ -288,7 +309,7 @@ def Paymant_View(request):
                 )
             latest_global_debt = Global_Debt.objects.filter(customer = request.user).latest('timeOfCreating')
             old_debt = Old_debt.objects.get(date=request.POST.get('date'), customer=request.user).debt
-            print(old_debt)
+            # print(old_debt)
             debt_sum = latest_global_debt.debt - debt.money - debt.returned - debt.salary - old_debt
             weekDebt = Week_debt.objects.create(
                 customer = request.user,
@@ -319,7 +340,7 @@ def sendOrder(request):
             supplierof_Table = supplier,
         )
         pTable.save()
-        # rows_of_colmns = 
+
         for customer in customers:
             try:
                 # print('Hello World!')
@@ -339,20 +360,3 @@ def sendOrder(request):
                 continue
     
     return redirect('employee')
-
-
-# def Return(request):
-#     if request.method == 'POST':
-#         form = PaymantForm(request.POST)
-#         if form.is_valid():
-#             debt = Debt.objects.create(
-#                 customer=request.user,
-#                 debt=-int(request.POST.get('debt')),
-#                 is_return = True,
-#                 date = request.POST.get('date')
-#                 )
-#             print(request.POST.get('date'), 'dateeee')
-#             debt.save()
-#             return redirect('customer')
-#         return redirect('customer')
-#     return redirect('customer')

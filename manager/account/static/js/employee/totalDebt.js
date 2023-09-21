@@ -20,5 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Find the "TotalDebt" table cell and update its content with the total debt
     var totalDebtCell = document.getElementById('TotalDebt');
-    totalDebtCell.textContent = totalDebt.toFixed(2); // Assuming 2 decimal places
+    totalDebtCell.textContent = totalDebt.toFixed(0); // Assuming 2 decimal places
     });
+
+const drivers = document.querySelectorAll('#dirverDebt')
+const driveTot = document.querySelector('#driversTotal')
+driveTot.textContent = "0"
+drivers.forEach((driver) => {
+    driveTot.textContent = parseInt(driveTot.textContent.trim()) + parseInt(driver.textContent.trim())
+})

@@ -15,15 +15,15 @@
 <table>
     <thead style="word-wrap: break-word;">
         <tr>
-            <td>Ապրանքի Անունը</td>
-            <td>Ապրանքի Գինը</td>
+            <th>Ապրանքի Անունը</th>
+            <th>Ապրանքի Գինը</th>
         </tr>
     </thead>
     <tbody>
-        {% for i in իtems %}
+        {% for i in items %}
             <tr>
-                <td>{{i.product_name}}</td>
-                <td>{{i.product_price}}</td>
+                <td>{{i.productName}}</td>
+                <td>{{i.supPrice}}</td>
             </tr>
         {% endfor %}
     </tbody>

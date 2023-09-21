@@ -24,7 +24,7 @@
                 {% if header.lenght > 0 %}
                     {{ header }}
                 {% else %}
-                    <h1 style="color:white;">Բարի Գալուստ {{user}}</h1>
+                    <h1 style="color:white;">Բարի Գալուստ {{user.username}}</h1>
                 {% endif %}
             {% endblock %}
         {% endif %}
@@ -70,7 +70,7 @@
                 {% endif %}
             {% endblock %}
         {% elif user.is_supplier %}
-            <a href="{% url 'orderedProducts' %}">Դատարկ</a>
+            <a href="{% url 'orderedProducts' %}">Տեսականի</a>
         {% endif %}
         <a href="{% url 'logout' %}">Ելք</a>
       </nav>

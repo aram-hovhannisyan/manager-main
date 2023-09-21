@@ -75,8 +75,8 @@
         {% for debt in joinedDebt %}
             <tr>
                 <td>{{debt.0}}</td>
-                <td>{{debt.1}}</td>
-                <td>{{debt.2}}</td>
+                <td date="{{debt.0}}" id="debtNum">{{debt.1}}</td>
+                <td date="{{debt.0}}" id="debtNum">{{debt.2}}</td>
                 <td></td>
             </tr>
         {% endfor %}
@@ -221,7 +221,6 @@
             <tr class="footer">
                 <td>Այլ․Ապրանք</td>
                 <td>{{table.dateOfCreating|format_date}}</td>
-
                 <td>Total</td>
                 <td id="totalPrice"></td>
             </tr>
@@ -250,7 +249,16 @@
         {% endif %}
     </span>
 </div>
-
+<div id="scrollToTop" class="scroll-to-top"
+    style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        display: none;
+    "
+>&#8593;</div>
 {% endblock %}
 
 
@@ -258,5 +266,6 @@
 
 <script src="{% static 'js/customer/addTotalForTable.js'%}"></script>
 <script src="{% static 'js/customer/defaultDate.js' %}"></script>
-
+<script src="{% static 'js/customer/miniScroller.js' %}"></script>
+<script src="{% static 'js/customer/scroller.js' %}"></script>
 {% endblock %}

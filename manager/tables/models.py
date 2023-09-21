@@ -26,7 +26,7 @@ class ItemsModel(models.Model):
         return theProd
 
     def __str__(self) -> str:
-        return f'{self.productName}'
+        return f'{self.productName}---{self.customer}---{self.supplier}---{self.productPrice}'
 
 
 
@@ -39,6 +39,9 @@ class JoinedTables(models.Model):
     class Meta:
         ordering = ["-timeOfCreating"]
     
+    def __str__(self) -> str:
+        return self.customer.username
+
 class SingleTable(models.Model):
     tableName = models.CharField(max_length=250, null= True)
     customer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -60,7 +63,7 @@ class UserTable(models.Model):
         ordering = ["-timeOfCreating"]
     
     def __str__(self):
-        return self.tableName
+        return self.user.username
 
 class TableItem(models.Model):
     table = models.ForeignKey(UserTable, on_delete=models.CASCADE)
@@ -73,7 +76,7 @@ class TableItem(models.Model):
     supTotal = models.IntegerField(null=True)
 
     def __str__(self) -> str:
-        return f'{self.product_name}-{self.product_count}'
+        return f'{self.product_name}-{self.product_count}--{self.supplier}---{self.customer}'
 
 class WaitingForChange(models.Model):
     table_item = models.ForeignKey(TableItem, on_delete=models.CASCADE)
@@ -87,6 +90,7 @@ class BigTable(models.Model):
     supplier = models.ForeignKey(User, on_delete=models.CASCADE,related_name='supplier', null = True)
     table = models.ForeignKey(UserTable, on_delete=models.SET_NULL, null = True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null = True)
+    modifiedDate = models.DateField(null=True)
 
     def __str__(self) -> str:
         return f'{self.supplier}'
@@ -180,7 +184,7 @@ class Ordered_Products_Column(models.Model):
     table = models.ForeignKey(UserTable, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.parent_Table}"
+        return f"{self.parent_Table}---{self.table.user.username}"
 
 class Paymant(models.Model):
     money = models.IntegerField()

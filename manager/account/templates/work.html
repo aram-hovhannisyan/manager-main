@@ -58,7 +58,33 @@
             <td style="color: red; border-top: 2px solid red;font-size: 25px;" id="TotalDebt"></td>
         </tr>
     </tbody>
+</table><br><br><br><br>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2" style="text-align: center;">
+                <h1>Վարորդներ</h1>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><h2 style="text-align: center;"><a style="text-decoration: none;" href="{% url 'tablesbyohan' %}">Օհան</a></h2></td>
+            <td><h2 style="text-align: center;" id="dirverDebt">{{ohanDebt}}</h2></td>
+        </tr>
+        <tr>
+            <td><h2 style="text-align: center;"><a style="text-decoration: none;" href="{% url 'tablesbykamo' %}">Կամո</a></h2></td>
+            <td><h2 style="text-align: center;" id="dirverDebt">{{kamoDebt}}</h2></td>
+        </tr>
+        <tr>
+            <td style="color: red; border-top: 2px solid red;font-size: 25px; text-align: center;">Ընդհանուր</td>
+            <td style="color: red; border-top: 2px solid red;font-size: 25px; text-align: center;" id="driversTotal"></td>
+        </tr>
+    </tbody>
 </table>
+
+{% endblock %}
 
 {% block 'scripts' %}
 <script src="{% static 'js/employee/totalDebt.js' %}"></script>
@@ -66,4 +92,3 @@
 <script src="{% static 'js/customer/inputDate.js' %}"></script>
 
 {% endblock%}
-{% endblock %}
