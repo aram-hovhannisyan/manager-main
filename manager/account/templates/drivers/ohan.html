@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block 'links' %}
+
+<link rel="stylesheet" href="{% static 'tables/home.css' %}">
+
+{% endblock %}
+
+{% block 'title' %}
+<title>{{user.username}}'s Page</title>
+{% endblock %}
+
+
+{% block 'body' %}
+
+<table class="responsive-table" id="OhansTable" style="text-align: center;">
+    <thead>
+        <tr>
+            <th style="text-align: center;">
+                Ապրանք
+            </th>
+            <th style="text-align: center;">
+                Օհան
+            </th>
+            <th style="text-align: center;">
+                Գ.4-րդ
+            </th>
+            <th style="text-align: center;">
+                Գ․ավագ
+            </th>
+            <th style="text-align: center;">
+                Արա
+            </th>
+            <th style="text-align: center;">
+                Ընդ...
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in Items %}
+        {% if item.1.productPrice != 0%}
+            <tr>
+                <td>
+                    {{ item.0 }}
+                </td>
+                <td>
+                    <input type="number" name="inp" 
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.1.supPrice}}"
+                    customer="{{item.1.customer}}"
+                    supplier="{{item.1.supplier}}"
+                    placeholder="{{item.1.productPrice}}" value="">
+                </td>
+                <td class="productCount">
+                    <input type="number" name="inp"
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.2.supPrice}}"
+                    customer="{{item.2.customer}}"
+                    supplier="{{item.2.supplier}}"
+                    placeholder="{{item.2.productPrice}}" value="">
+                </td>
+                <td class="productCount">
+                    <input type="number" name="inp"
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.3.supPrice}}"
+                    customer="{{item.3.customer}}"
+                    supplier="{{item.3.supplier}}"
+                    placeholder="{{item.3.productPrice}}" value="">
+                </td>
+                <td class="productCount">
+                    <input type="number" name="inp"
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.4.supPrice}}"
+                    customer="{{item.4.customer}}"
+                    supplier="{{item.4.supplier}}"
+                    placeholder="{{item.4.productPrice}}" value="">
+                </td>
+                <td class="totalPrice">0</td>
+            </tr>
+        {% else %}
+            <tr style="display: none;">
+                <td>
+                    {{ item.0 }}
+                </td>
+                <td>
+                    <input type="number" name="inp" 
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.1.supPrice}}"
+                    customer="{{item.1.customer}}"
+                    supplier="{{item.1.supplier}}"
+                    placeholder="{{item.1.productPrice}}" value="">
+                </td>
+                <td class="productCount">
+                    <input type="number" name="inp"
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.2.supPrice}}"
+                    customer="{{item.2.customer}}"
+                    supplier="{{item.2.supplier}}"
+                    placeholder="{{item.2.productPrice}}" value="">
+                </td>
+                <td class="productCount">
+                    <input type="number" name="inp"
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.3.supPrice}}"
+                    customer="{{item.3.customer}}"
+                    supplier="{{item.3.supplier}}"
+                    placeholder="{{item.3.productPrice}}" value="">
+                </td>
+                <td class="productCount">
+                    <input type="number" name="inp"
+                    class="countInput"
+                    style="color: blue;"
+                    supPrice="{{item.4.supPrice}}"
+                    customer="{{item.4.customer}}"
+                    supplier="{{item.4.supplier}}"
+                    placeholder="{{item.4.productPrice}}" value="">
+                </td>
+                <td class="totalPrice">0</td>
+            </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td style="color: red;" >Ընդ</td>
+            <td style="color: red;" id="ohan"></td>
+            <td style="color: red;" id="gavar"></td>
+            <td style="color: red;" id="avag"></td>
+            <td style="color: red;" id="ara"></td>
+            <td>---</td>
+        </tr>
+        <tr style="height: 60px;">
+            <td style="border-top: 2px solid black;" colspan="2">
+                <input type="date" id="inputDate" class="inputDate" name="date">
+            </td>
+            <td style="border-top: 2px solid black;" colspan="2"> <!-- Adjust colspan for new fields -->
+                <button id="saveButton" class="saveTable" type="button" style="height: 40px;" onclick="send()">Ուղարկել</button>
+            </td>
+            <td style="border-top: 2px solid black;" id="total-sum" colspan="2">0</td>
+        </tr>
+    </tfoot>
+</table>
+
+{% endblock %}
+
+{% block 'scripts' %}
+    <script src="{% static 'js/customer/ohanInputDate.js' %}"></script>
+    <script src="{% static 'js/customer/ohanCalculate.js' %}"></script>
+    <script src="{% static 'js/customer/ohanSendOrder.js' %}"></script>
+    <script src="{% static 'js/customer/ohanTotalRow.js' %}"></script>
+{% endblock %}
